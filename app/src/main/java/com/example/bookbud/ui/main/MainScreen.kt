@@ -1,13 +1,17 @@
 package com.example.bookbud.ui.main
 
+import com.example.bookbud.ui.profile.ProfileScreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.bookbud.ui.books.BooksScreen
-import com.example.bookbud.ui.profile.ProfileScreen
+import com.example.bookbud.ui.theme.darkGreen
+import com.example.bookbud.ui.theme.neonGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +28,7 @@ fun MainScreen(
                 actions = {
                     IconButton(onClick = onSavedBooksClick) {
                         Icon(
-                            imageVector = Icons.Default.Bookmark,
+                            imageVector = Icons.Default.Star,
                             contentDescription = "Saved Books"
                         )
                     }

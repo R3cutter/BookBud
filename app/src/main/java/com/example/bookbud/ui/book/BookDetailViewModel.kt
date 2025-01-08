@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.bookbud.model.Book
 import com.example.bookbud.model.Review
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class BookDetailViewModel @Inject constructor() : ViewModel() {

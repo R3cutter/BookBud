@@ -16,7 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookbud.model.Book
 import com.example.bookbud.model.Review
-import com.example.bookbud.ui.theme.neonGreen
+
+val neonGreen = Color(0xFF00FF00) // Örnek bir yeşil renk
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,9 +52,9 @@ fun BookDetailScreen(
                     ) {
                         Icon(
                             imageVector = if (book?.isSaved == true) 
-                                Icons.Default.Bookmark 
+                                Icons.Default.Star 
                             else 
-                                Icons.Default.BookmarkBorder,
+                                Icons.Default.Star,
                             contentDescription = "Save Book"
                         )
                     }
