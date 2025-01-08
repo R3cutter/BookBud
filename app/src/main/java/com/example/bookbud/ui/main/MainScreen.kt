@@ -1,29 +1,59 @@
+package com.example.bookbud.ui.main
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.bookbud.ui.theme.darkGreen
-import com.example.bookbud.ui.theme.neonGreen
-
+import com.example.bookbud.ui.books.BooksScreen
+import com.example.bookbud.ui.profile.ProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onBookClick: (String) -> Unit,
+    onSavedBooksClick: () -> Unit
+) {
     var selectedTab by remember { mutableStateOf(0) }
 
     Scaffold(
-        topBar = { MainTopBar() },
-        bottomBar = { MainBottomBar(selectedTab) { selectedTab = it } }
-    ) { paddingValues ->
+        topBar = {
+            TopAppBar(
+                title = { Text("Bookbud") },
+                actions = {
+                    IconButton(onClick = onSavedBooksClick) {
+                        Icon(
+                            imageVector = Icons.Default.Bookmark,
+                            contentDescription = "Saved Books"
+                        )
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            NavigationBar {
+                NavigationBarItem(
+                    icon = { Icon(Icons.Default.Home, "Books") },
+                    label = { Text("Books") },
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 }
+                )
+                NavigationBarItem(
+                    icon = { Icon(Icons.Default.Person, "Profile") },
+                    label = { Text("Profile") },
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 }
+                )
+            }
+        }
+    ) { padding ->
         when (selectedTab) {
-            0 -> BooksScreen(paddingValues)
-            1 -> ProfileScreen(paddingValues)
+            0 -> BooksScreen(
+                padding = padding,
+                onBookClick = onBookClick
+            )
+            1 -> ProfileScreen(padding = padding)
         }
     }
 }
@@ -70,7 +100,7 @@ fun MainBottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(onBookClick = {}, onSavedBooksClick = {})
 }
 
 @Preview(showBackground = true)
