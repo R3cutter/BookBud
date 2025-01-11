@@ -1,4 +1,4 @@
-package com.example.bookbud.ui.book
+package com.example.bookbud.ui.book.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,24 +11,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookbud.model.Book
 import com.example.bookbud.model.Review
 import com.example.bookbud.ui.theme.neonGreen
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailScreen(
     bookId: String,
     onBackPress: () -> Unit,
-    onSaveBook: (Book) -> Unit,
+    onSaveBook: () -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val book = uiState.book
     var showReviewDialog by remember { mutableStateOf(false) }
+    var isSaved by remember { mutableStateOf(false) }
 
     LaunchedEffect(bookId) {
         viewModel.loadBook(bookId)
@@ -46,15 +49,14 @@ fun BookDetailScreen(
                 actions = {
                     IconButton(
                         onClick = { 
-                            book?.let { onSaveBook(it) }
+                            isSaved = !isSaved
+                            onSaveBook()
                         }
                     ) {
                         Icon(
-                            imageVector = if (book?.isSaved == true) 
-                                Icons.Default.Bookmark 
-                            else 
-                                Icons.Default.BookmarkBorder,
-                            contentDescription = "Save Book"
+                            imageVector = if (isSaved) Icons.Default.Check else Icons.Default.Add,
+                            contentDescription = if (isSaved) "Kitap Kaydedildi" else "Kitabı Kaydet",
+                            tint = if (isSaved) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -115,8 +117,15 @@ private fun BookDetailContent(
                     .height(300.dp)
                     .background(Color.Gray)
             ) {
-                // Placeholder for book cover image
-                // Will be replaced with actual image loading
+                // Kitap kapağı için AsyncImage eklenecek
+                book?.imageUrl?.let { url ->
+                    AsyncImage(
+                        model = url,
+                        contentDescription = book.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
 
@@ -136,7 +145,7 @@ private fun BookDetailContent(
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = book?.author ?: "",
+                    text = book?.authors?.joinToString(", ") ?: "",  // authors listesini virgülle ayırarak göster
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Gray
                 )

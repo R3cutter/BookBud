@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bookbud.model.Book
 import com.example.bookbud.ui.theme.darkGreen
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,55 +74,43 @@ private fun SavedBookItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+            .padding(8.dp),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            // Kitap kapağı için placeholder
-            Box(
+            // Kitap kapağı
+            AsyncImage(
+                model = book.imageUrl,
+                contentDescription = book.title,
                 modifier = Modifier
-                    .size(80.dp)
-                    .background(Color.Gray, RoundedCornerShape(4.dp))
+                    .width(80.dp)
+                    .height(120.dp),
+                contentScale = ContentScale.Crop
             )
             
-            Spacer(modifier = Modifier.width(16.dp))
-            
+            // Kitap bilgileri
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp)
             ) {
                 Text(
                     text = book.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium
                 )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
                 Text(
-                    text = book.author,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    text = book.authors.joinToString(", "),
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Rating: ${book.rating}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
+                Text(
+                    text = book.description ?: "",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 3
+                )
             }
         }
     }

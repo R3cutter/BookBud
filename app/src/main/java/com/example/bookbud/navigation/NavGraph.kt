@@ -7,14 +7,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookbud.ui.login.LoginScreen
+import com.example.bookbud.ui.login.EmailLoginScreen
+import com.example.bookbud.ui.login.RegisterScreen
 import com.example.bookbud.ui.main.MainScreen
-import com.example.bookbud.ui.book.BookDetailScreen
+import com.example.bookbud.ui.book.detail.BookDetailScreen
 import com.example.bookbud.ui.saved.SavedBooksScreen
+import com.example.bookbud.ui.profile.ProfileScreen
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
+    object EmailLogin : Screen("email_login")
+    object Register : Screen("register")
     object Main : Screen("main")
     object SavedBooks : Screen("saved_books")
+    object Profile : Screen("profile")
     
     object BookDetail : Screen("book/{bookId}") {
         fun createRoute(bookId: String) = "book/$bookId"
@@ -30,13 +36,15 @@ fun NavGraph() {
         startDestination = Screen.Login.route
     ) {
         composable(Screen.Login.route) {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(Screen.Main.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
-                }
-            )
+            LoginScreen(navController = navController)
+        }
+        
+        composable(Screen.EmailLogin.route) {
+            EmailLoginScreen(navController = navController)
+        }
+        
+        composable(Screen.Register.route) {
+            RegisterScreen(navController = navController)
         }
         
         composable(Screen.Main.route) {
@@ -46,6 +54,9 @@ fun NavGraph() {
                 },
                 onSavedBooksClick = {
                     navController.navigate(Screen.SavedBooks.route)
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
                 }
             )
         }
@@ -67,6 +78,12 @@ fun NavGraph() {
                 onBookClick = { bookId ->
                     navController.navigate(Screen.BookDetail.createRoute(bookId))
                 }
+            )
+        }
+        
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }

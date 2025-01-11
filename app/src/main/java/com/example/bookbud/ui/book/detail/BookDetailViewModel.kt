@@ -1,4 +1,4 @@
-package com.example.bookbud.ui.book
+package com.example.bookbud.ui.book.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.bookbud.model.Book
 import com.example.bookbud.model.Review
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class BookDetailViewModel @Inject constructor() : ViewModel() {
@@ -20,16 +21,14 @@ class BookDetailViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                // Simulate loading book data
+                // Örnek kitap verisi
                 val book = Book(
                     id = bookId,
                     title = "Sample Book",
-                    author = "Author Name",
-                    coverUrl = "",
+                    authors = listOf("Author 1", "Author 2"),
                     description = "This is a sample book description.",
-                    publishYear = 2023,
-                    genre = "Fiction",
-                    rating = 4.5f,
+                    imageUrl = null,
+                    isSaved = false,
                     reviews = listOf(
                         Review(
                             id = "1",
@@ -62,7 +61,7 @@ class BookDetailViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             try {
                 val currentBook = uiState.value.book ?: return@launch
-                // Simulate adding a review
+                // Yeni yorum ekleme
                 val newReview = Review(
                     id = "2",
                     userId = "user2",

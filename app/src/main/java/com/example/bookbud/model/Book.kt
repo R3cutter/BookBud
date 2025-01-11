@@ -3,21 +3,17 @@ package com.example.bookbud.model
 data class Book(
     val id: String,
     val title: String,
-    val author: String,
-    val coverUrl: String,
+    val authors: List<String>,
     val description: String,
-    val publishYear: Int,
-    val genre: String,
-    val rating: Float,
-    val isSaved: Boolean = false,
-    val reviews: List<Review> = emptyList()
+    val imageUrl: String?,
+    val isSaved: Boolean,
+    val reviews: List<Review>
 )
 
 data class Review(
     val id: String,
     val userId: String,
-    val userName: String,
-    val rating: Float,
+    val rating: Int,
     val comment: String,
-    val date: String
+    val timestamp: Long
 ) 

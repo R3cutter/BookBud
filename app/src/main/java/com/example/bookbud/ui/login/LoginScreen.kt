@@ -10,130 +10,93 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookbud.ui.theme.darkGreen
 import com.example.bookbud.ui.theme.neonGreen
+import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bookbud.viewmodel.AuthViewModel
+import android.app.Activity
+import com.example.bookbud.R
+import com.example.bookbud.navigation.Screen
 
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit
+    navController: NavController,
+    viewModel: AuthViewModel = viewModel()
 ) {
-    var showPrivacyDialog by remember { mutableStateOf(false) }
-    var showTermsDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val googleSignInClient = remember {
+        GoogleSignIn.getClient(
+            context,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        )
+    }
 
-    Box(
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account?.idToken?.let { token ->
+                    viewModel.signInWithGoogle(token)
+                }
+            } catch (e: ApiException) {
+                // Hata işleme
+            }
+        }
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(darkGreen)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(120.dp))
-            
-            // Logo placeholder
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .background(neonGreen, shape = RoundedCornerShape(16.dp))
-            )
-            
-            Text(
-                text = "bookbud",
-                color = neonGreen,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-            
-            Text(
-                text = "Keşfet, Oku, Paylaş",
-                color = neonGreen.copy(alpha = 0.7f),
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
+        // Diğer UI elemanları...
 
-        Column(
+        // Giriş Yap Butonu
+        Button(
+            onClick = { navController.navigate(Screen.EmailLogin.route) },
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(vertical = 8.dp)
         ) {
-            Button(
-                onClick = { onLoginSuccess() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White
-                ),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Text(
-                    text = "Continue with Google",
-                    color = Color.Black,
-                    fontSize = 16.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Uygulamaya giriş yaparak gizlilik ve kullanıcı sözleşmelerini kabul etmiş sayılırsınız",
-                color = Color.White.copy(alpha = 0.6f),
-                fontSize = 12.sp,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Kullanıcı Sözleşmesi",
-                    color = neonGreen,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .clickable { showTermsDialog = true }
-                        .padding(vertical = 8.dp)
-                )
-                Text(
-                    text = " • ",
-                    color = neonGreen,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
-                Text(
-                    text = "Gizlilik Sözleşmesi",
-                    color = neonGreen,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .clickable { showPrivacyDialog = true }
-                        .padding(vertical = 8.dp)
-                )
-            }
+            Text(text = "E-posta ile Giriş Yap")
         }
 
-        if (showTermsDialog) {
-            AgreementDialog(
-                title = "Kullanıcı Sözleşmesi",
-                content = termsText,
-                onDismiss = { showTermsDialog = false }
-            )
+        // Kayıt Ol Butonu
+        Button(
+            onClick = { navController.navigate(Screen.Register.route) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
+            Text(text = "Kayıt Ol")
         }
 
-        if (showPrivacyDialog) {
-            AgreementDialog(
-                title = "Gizlilik Sözleşmesi",
-                content = privacyText,
-                onDismiss = { showPrivacyDialog = false }
-            )
+        // Google ile Giriş Butonu (mevcut)
+        Button(
+            onClick = { 
+                launcher.launch(googleSignInClient.signInIntent)
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Google ile Giriş Yap")
         }
     }
 }
@@ -190,6 +153,6 @@ private const val privacyText = """
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        onLoginSuccess = TODO()
+        navController = TODO()
     )
 } 

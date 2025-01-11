@@ -1,21 +1,28 @@
 package com.example.bookbud.ui.main
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import com.example.bookbud.ui.books.BooksScreen
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.bookbud.ui.book.list.BooksScreen
 import com.example.bookbud.ui.profile.ProfileScreen
+import com.example.bookbud.ui.theme.darkGreen
+import com.example.bookbud.ui.theme.neonGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     onBookClick: (String) -> Unit,
-    onSavedBooksClick: () -> Unit
+    onSavedBooksClick: () -> Unit,
+    onProfileClick: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(0) }
+    var isSaved by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -24,7 +31,7 @@ fun MainScreen(
                 actions = {
                     IconButton(onClick = onSavedBooksClick) {
                         Icon(
-                            imageVector = Icons.Default.Bookmark,
+                            imageVector = Icons.Default.Add,
                             contentDescription = "Saved Books"
                         )
                     }
@@ -43,17 +50,22 @@ fun MainScreen(
                     icon = { Icon(Icons.Default.Person, "Profile") },
                     label = { Text("Profile") },
                     selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 }
+                    onClick = { 
+                        selectedTab = 1
+                        onProfileClick()
+                    }
                 )
             }
         }
     ) { padding ->
         when (selectedTab) {
             0 -> BooksScreen(
-                padding = padding,
+                paddingValues = padding,
                 onBookClick = onBookClick
             )
-            1 -> ProfileScreen(padding = padding)
+            1 -> ProfileScreen(
+                onNavigateBack = { selectedTab = 0 }
+            )
         }
     }
 }
@@ -113,4 +125,24 @@ fun MainTopBarPreview() {
 @Composable
 fun MainBottomBarPreview() {
     MainBottomBar(selectedTab = 0, onTabSelected = {})
+}
+
+@Composable
+fun BookItem(
+    onSaveClick: () -> Unit
+) {
+    var isSaved by remember { mutableStateOf(false) }
+
+    IconButton(
+        onClick = { 
+            isSaved = !isSaved
+            onSaveClick()
+        }
+    ) {
+        Icon(
+            imageVector = if (isSaved) Icons.Default.Check else Icons.Default.Add,
+            contentDescription = if (isSaved) "Kitap Kaydedildi" else "Kitabı Kaydet",
+            tint = if (isSaved) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+        )
+    }
 } 
