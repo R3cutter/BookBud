@@ -17,10 +17,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.bookbud" />
+                  <option name="mobileSdkAppId" value="1:894972923120:android:66f81ef202276f1b7e4635" />
+                  <option name="projectId" value="bookbud-1e93d" />
+                  <option name="projectNumber" value="894972923120" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

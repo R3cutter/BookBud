@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "894972923120",
+    "project_id": "bookbud-1e93d",
+    "storage_bucket": "bookbud-1e93d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894972923120:android:66f81ef202276f1b7e4635",
+        "android_client_info": {
+          "package_name": "com.example.bookbud"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJIEo0ZXma9sXVtJ1KB052lUCE7kZLqiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
